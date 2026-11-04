@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="pt-BR">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Taskelio · Seu trabalho, contado</title><link rel="stylesheet" href="styles.css"></head>
+<body>
+  <aside class="sidebar">
+    <a class="brand" href="app.html"><span class="brand-icon">✓</span> taskelio<span class="brand-dot">.</span></a>
+    <div class="workspace-label">SEU ESPAÇO DE TRABALHO</div>
+    <nav><button class="nav-item selected" data-view="overview">◫ <span>Visão geral</span></button><button class="nav-item" data-view="rules">⌘ <span>Meus contadores</span></button><button class="nav-item" data-view="history">◷ <span>Histórico</span></button></nav>
+    <div class="local-note"><span class="status-dot"></span><strong>Fica no seu navegador.</strong><p>Seus números são seus. Sem conta, servidor ou envio de dados.</p><small>VERSÃO 0.1 · OPEN SOURCE</small></div>
+  </aside>
+  <main>
+    <header class="topbar"><span>Seu espaço / <strong id="breadcrumb">Visão geral</strong></span><span class="local-pill"><span class="status-dot"></span> Armazenamento local</span></header>
+    <section class="page-heading"><div><div class="eyebrow" id="date-label"></div><h1 id="page-title">Cada tarefa conta.</h1><p id="page-description">Cuide do trabalho. A gente cuida da contagem.</p></div><button class="primary" id="new-rule">＋ Novo contador</button></section>
+    <section id="overview-view">
+      <div class="metrics"><article><span>Tarefas hoje</span><strong id="metric-today">0</strong><small>Um passo de cada vez.</small></article><article><span>Total registrado</span><strong id="metric-total">0</strong><small>Desde o seu primeiro registro</small></article><article><span>Média por dia ativo</span><strong id="metric-average">0</strong><small>Considera dias com registros</small></article></div>
+      <div class="section-title"><h2>Seus contadores <span id="rule-count" class="count-badge">0</span></h2><span>Um jeito seu de medir o trabalho</span></div>
+      <div id="counter-list" class="counter-grid"></div>
+      <div class="how-it-works"><div class="mini-icon">↗</div><div><h3>Você define o que conta.</h3><p>Uma página aberta, um clique ou um campo atualizado. Crie uma regra e deixe o Taskelio acompanhar.</p></div><button id="learn-create" class="text-button">Criar minha regra →</button></div>
+    </section>
+    <section id="rules-view" hidden><div id="rules-list" class="counter-grid"></div></section>
+    <section id="history-view" hidden><div class="section-title"><h2>Atividades registradas</h2><button id="export" class="secondary">↓ Exportar CSV</button></div><p class="muted">Últimos 100 registros. A exportação inclui o histórico completo, inclusive correções.</p><div class="table-wrap"><table><thead><tr><th>Contador</th><th>Data e hora</th><th>Origem</th><th>Ação</th></tr></thead><tbody id="history-body"></tbody></table></div></section>
+    <footer>Menos contagem. Mais foco. <span>taskelio · feito para o seu dia a dia</span></footer>
+  </main>
+  <dialog id="rule-dialog">
+    <form id="rule-form">
+      <div class="dialog-heading"><div><div class="eyebrow">DO SEU JEITO</div><h2 id="dialog-title">Novo contador</h2></div><button type="button" id="close-dialog" class="icon-button" aria-label="Fechar">×</button></div>
+      <p class="muted">Escolha onde acontece e o que significa uma tarefa feita.</p>
+      <label>Nome do contador<input name="name" required maxlength="80" placeholder="Ex.: Leads qualificados"></label>
+      <div class="form-row"><label>Site<input name="origin" required type="url" placeholder="https://sua-empresa.pipedrive.com"></label><label>Caminho da página<input name="path" required value="*" placeholder="/person/*"></label></div>
+      <p class="hint">Use * para qualquer trecho. Ex.: /person/* ou /app#/contacts/*. Parâmetros após ? não entram na regra.</p>
+      <label>Quando contar?<select name="trigger"><option value="field">Um campo mudar para um valor</option><option value="visit">Uma página for aberta</option><option value="click">Um elemento receber um clique</option></select></label>
+      <div id="element-fields"><label>Elemento observado <span class="optional">seletor CSS</span><input name="selector" placeholder='Ex.: [data-testid="qualified"]'></label><div class="inline-actions"><button id="pick-element" class="secondary" type="button">⌖ Selecionar na página</button><button id="test-rule" class="text-button" type="button">Testar elemento</button></div><p class="hint">Abra a página do site em outra aba. A seleção visual não executa o clique no sistema.</p><label id="value-field">Valor esperado<input name="value" placeholder="Ex.: Yes"></label></div>
+      <details><summary>Identificação do item e repetição</summary><label>Como evitar repetições?<select name="dedup"><option value="daily">Uma vez por item a cada dia</option><option value="once">Uma vez por item, sem repetir</option><option value="always">Cada ocorrência (intervalo mínimo de 1,2 s)</option></select></label><label>Elemento com o identificador do item <span class="optional">opcional</span><input name="identitySelector" placeholder="Ex.: [data-id]"></label><p class="hint">Por padrão, cada endereço (caminho + #) é um item, sem parâmetros de busca. Para várias linhas na mesma página ou IDs no parâmetro da URL, configure um identificador estável. O elemento usa data-id, href ou seu valor/texto.</p></details>
+      <label>Meta diária <span class="optional">opcional</span><input name="goal" type="number" min="0" max="1000000" step="1" value="0"></label>
+      <div class="form-note" id="trigger-note"></div><p id="form-feedback" role="status" class="form-feedback"></p>
+      <div class="dialog-footer"><button class="secondary" type="button" id="cancel-dialog">Cancelar</button><button class="primary" type="submit" id="save-rule">Salvar contador</button></div>
+    </form>
+  </dialog>
+  <div id="toast" role="status" hidden></div>
+  <script type="module" src="app.js"></script>
+</body></html>

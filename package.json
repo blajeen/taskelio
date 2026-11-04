@@ -1,0 +1,21 @@
+{
+  "name": "taskelio",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Contadores pessoais de atividades, com regras locais e configuráveis.",
+  "license": "MIT",
+  "scripts": {
+    "test": "node --test tests/*.test.js",
+    "test:browser": "playwright test",
+    "check": "node scripts/check.mjs",
+    "package": "node scripts/package.mjs"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.64.1",
+    "fflate": "^0.8.3"
+  }
+}
