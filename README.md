@@ -2,6 +2,10 @@
 
 # Taskelio · Seu trabalho, contado
 
+**Português** · [English](README.en.md)
+
+**Idiomas da extensão:** Português e English. Troque pelo seletor **Idioma / Language** no painel ou no popup. A preferência é salva localmente; nomes de contadores e valores das regras não são traduzidos.
+
 [![Checks](https://github.com/blajeen/taskelio/actions/workflows/checks.yml/badge.svg)](https://github.com/blajeen/taskelio/actions/workflows/checks.yml)
 [![Licença MIT](https://img.shields.io/badge/licen%C3%A7a-MIT-244e3b)](LICENSE)
 
@@ -28,7 +32,7 @@ Sem conta, servidor, telemetria ou dependências em tempo de execução. O Taske
 
 ## Instalar a extensão
 
-1. Abra a [página de versões](https://github.com/blajeen/taskelio/releases/latest) e baixe **`taskelio-v0.1.0.zip`**, na seção **Assets**.
+1. Abra a [página de versões](https://github.com/blajeen/taskelio/releases/latest) e baixe **`taskelio-v0.2.0.zip`**, na seção **Assets**.
 2. Extraia o ZIP para uma pasta permanente no seu computador.
 3. Abra `chrome://extensions` no Chrome ou `edge://extensions` no Edge.
 4. Ative **Modo do desenvolvedor**.
@@ -96,7 +100,7 @@ Veja [a arquitetura](docs/ARCHITECTURE.md) e [como contribuir](CONTRIBUTING.md).
 ## Próximos passos
 
 - Modelos de regra exportáveis/importáveis sem dados pessoais.
-- Internacionalização da interface (a primeira versão está em português).
+- Mais idiomas com contribuições da comunidade.
 - Contrato de conectores versionado e integrações específicas.
 - Suporte a múltiplas linhas e contextos de planilha.
 - Integração própria para Excel, independente da extensão.

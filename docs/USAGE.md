@@ -1,10 +1,16 @@
 # Como usar o Taskelio
 
+**Português** · [English](USAGE.en.md)
+
+## Idioma
+
+Use **Idioma / Language** no painel ou no popup para escolher **Português** ou **English**. Na primeira abertura, a extensão usa português para navegadores em português e inglês para os demais. Sua escolha fica salva neste perfil do navegador e é compartilhada entre o painel e o popup. Trocar o idioma não altera contadores, valores esperados, regras ou histórico.
+
 O Taskelio é uma extensão de navegador para acompanhar atividades definidas por você. Cada contador representa uma atividade, como leads qualificados, perfis consultados ou tarefas finalizadas.
 
 ## 1. Instalar
 
-1. Baixe `taskelio-v0.1.0.zip` nos **Assets** da [versão mais recente](https://github.com/blajeen/taskelio/releases/latest).
+1. Baixe `taskelio-v0.2.0.zip` nos **Assets** da [versão mais recente](https://github.com/blajeen/taskelio/releases/latest).
 2. Extraia os arquivos para uma pasta permanente. Ela precisa conter `manifest.json`.
 3. No Chrome, abra `chrome://extensions`. No Edge, abra `edge://extensions`.
 4. Ative **Modo do desenvolvedor** e clique em **Carregar sem compactação** / **Carregar expandida**.

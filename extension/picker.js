@@ -2,7 +2,9 @@
   if (globalThis.__taskelioPicking) return;
   globalThis.__taskelioPicking = true;
   const banner = document.createElement('div');
-  banner.textContent = 'Taskelio · Clique no elemento desejado. Esc para cancelar.';
+  banner.textContent = globalThis.__taskelioPickerLanguage === 'pt-BR'
+    ? 'Taskelio · Clique no elemento desejado. Esc para cancelar.'
+    : 'Taskelio · Click the element you want. Press Esc to cancel.';
   banner.style.cssText = 'position:fixed;top:16px;left:50%;transform:translateX(-50%);z-index:2147483647;padding:16px 24px;background:#183f37;color:white;border-radius:12px;font:14px system-ui;pointer-events:none;box-shadow:0 4px 24px #0003;';
   document.documentElement.append(banner);
   let hovered, oldOutline;

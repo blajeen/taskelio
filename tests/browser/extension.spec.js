@@ -21,7 +21,7 @@ test.beforeAll(async () => {
   manifest.host_permissions = ['http://127.0.0.1/*'];
   await writeFile(manifestPath, JSON.stringify(manifest));
   context = await chromium.launchPersistentContext(path.join(root, 'profile'), {
-    channel: 'chromium', headless: true, viewport: { width: 1365, height: 1000 },
+    channel: 'chromium', headless: true, locale: 'pt-BR', viewport: { width: 1365, height: 1000 },
     args: [`--disable-extensions-except=${extension}`, `--load-extension=${extension}`]
   });
   const worker = context.serviceWorkers()[0] || await context.waitForEvent('serviceworker');
@@ -147,4 +147,60 @@ test('concurrent additions persist without lost updates and survive a panel relo
   expect(result.after - result.before).toBe(20);
   await app.reload();
   await expect(app.locator('#metric-today')).toHaveText('24');
+});
+
+test('English persists across panels and popup; switching languages preserves rules and history', async () => {
+  const app = await context.newPage();
+  const errors = [];
+  app.on('pageerror', error => errors.push(error.message));
+  await app.goto(`chrome-extension://${extensionId}/app.html`);
+  const snapshot = await app.evaluate(async () => (await chrome.runtime.sendMessage({ type: 'GET_STATE' })).data);
+  await expect(app.locator('html')).toHaveAttribute('lang', 'pt-BR');
+  await app.locator('#language').selectOption('en');
+  await expect(app.locator('#new-rule')).toHaveText('＋ New counter');
+  await expect(app.locator('#page-title')).toHaveText('Every task counts.');
+  await app.reload();
+  await expect(app.locator('html')).toHaveAttribute('lang', 'en');
+  await expect(app.locator('#language')).toHaveValue('en');
+  await expect(app.locator('#metric-today')).toHaveText('24');
+  const after = await app.evaluate(async () => (await chrome.runtime.sendMessage({ type: 'GET_STATE' })).data);
+  expect(after).toEqual(snapshot);
+  await expect(app.locator('#counter-list')).toContainText('Leads qualificados');
+  await expect(app.locator('#counter-list')).toContainText('Field changed');
+  await app.locator('#new-rule').click();
+  await expect(app.locator('#dialog-title')).toHaveText('New counter');
+  await expect(app.locator('[name=name]')).toHaveAttribute('placeholder', 'e.g. Qualified leads');
+  await app.locator('[name=origin]').fill(origin);
+  await app.locator('[name=selector]').fill('[');
+  await app.locator('#test-rule').click();
+  await expect(app.locator('#form-feedback')).toHaveText('The CSS selector is invalid.');
+  await app.locator('[name=selector]').fill('#qualified');
+  await app.locator('#test-rule').click();
+  await expect(app.locator('#form-feedback')).toContainText('1 element(s) found.');
+  const crm = context.pages().find(p => p.url().startsWith(origin));
+  await app.locator('#pick-element').click();
+  await expect(crm.getByText('Taskelio · Click the element you want. Press Esc to cancel.')).toBeVisible();
+  await crm.locator('#qualified').click();
+  await expect(app.locator('#form-feedback')).toContainText('Element selected.');
+  await app.locator('#cancel-dialog').click();
+  await app.locator('[data-view=history]').click();
+  await expect(app.locator('#page-title')).toHaveText('A record of every step.');
+  await expect(app.locator('#history-body')).toContainText('Automatic');
+  const downloadPromise = app.waitForEvent('download');
+  await app.locator('#export').click();
+  const exported = await readFile(await (await downloadPromise).path(), 'utf8');
+  expect(exported).toContain('"counter","utc_time"');
+  expect(exported).toContain('Leads qualificados');
+  const popup = await context.newPage();
+  await popup.goto(`chrome-extension://${extensionId}/popup.html`);
+  await expect(popup.locator('#open')).toHaveText('Open my dashboard ↗');
+  await expect(popup.locator('#total')).toHaveText('24');
+  await popup.locator('#language').selectOption('pt-BR');
+  await expect(app.locator('html')).toHaveAttribute('lang', 'pt-BR');
+  await expect(app.locator('#page-title')).toHaveText('Um registro de cada passo.');
+  await app.locator('#language').selectOption('en');
+  await expect(popup.locator('#open')).toHaveText('Open my dashboard ↗');
+  await app.locator('[data-view=overview]').click();
+  await app.screenshot({ path: 'test-results/taskelio-dashboard-en.png', fullPage: true });
+  expect(errors).toEqual([]);
 });

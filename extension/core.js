@@ -20,14 +20,14 @@ export function validateRule(input) {
     enabled: input.enabled !== false,
     createdAt: input.createdAt || Date.now()
   };
-  if (!/^https?:\/\//.test(rule.origin)) throw new Error('Use um endereço HTTP ou HTTPS.');
-  if (!rule.name) throw new Error('Dê um nome ao contador.');
-  if (!['visit', 'click', 'field'].includes(rule.trigger)) throw new Error('Gatilho inválido.');
-  if (!['always', 'daily', 'once'].includes(rule.dedup)) throw new Error('Repetição inválida.');
-  if (rule.trigger !== 'visit' && !rule.selector) throw new Error('Selecione um elemento da página.');
-  if (rule.trigger === 'field' && !rule.value) throw new Error('Informe o valor que deve ser reconhecido.');
-  if (!Number.isInteger(rule.goal) || rule.goal < 0 || rule.goal > 1000000) throw new Error('A meta deve ser um número inteiro positivo ou zero.');
-  if (!rule.path.startsWith('/') && rule.path !== '*') throw new Error('O caminho deve começar com / ou ser *.');
+  if (!/^https?:\/\//.test(rule.origin)) throw new Error('ERR_ORIGIN');
+  if (!rule.name) throw new Error('ERR_NAME');
+  if (!['visit', 'click', 'field'].includes(rule.trigger)) throw new Error('ERR_TRIGGER');
+  if (!['always', 'daily', 'once'].includes(rule.dedup)) throw new Error('ERR_DEDUP');
+  if (rule.trigger !== 'visit' && !rule.selector) throw new Error('ERR_ELEMENT');
+  if (rule.trigger === 'field' && !rule.value) throw new Error('ERR_VALUE');
+  if (!Number.isInteger(rule.goal) || rule.goal < 0 || rule.goal > 1000000) throw new Error('ERR_GOAL');
+  if (!rule.path.startsWith('/') && rule.path !== '*') throw new Error('ERR_PATH');
   return rule;
 }
 
@@ -42,7 +42,7 @@ export function matchesRule(rule, rawUrl) {
 
 export function recordEvent(state, rule, activity, now = Date.now()) {
   if (!rule.enabled) return { state, counted: false, reason: 'paused' };
-  if (!activity.entityKey) throw new Error('Não foi possível identificar o item.');
+  if (!activity.entityKey) throw new Error('ERR_IDENTITY');
   const day = dayKey(now);
   const previous = state.events.filter(e => e.ruleId === rule.id && !e.undone && e.source !== 'manual');
   const duplicate = previous.some(e => e.entityKey === activity.entityKey && (
@@ -68,14 +68,15 @@ export function stats(state, ruleId, today = dayKey()) {
   };
 }
 
-export function csv(events) {
+export function csv(events, language = 'pt-BR') {
+  const english = language === 'en';
   const quote = value => {
     let text = String(value ?? '');
     if (/^[=+\-@\t\r]/.test(text)) text = `'${text}`;
     return `"${text.replaceAll('"', '""')}"`;
   };
   return '\uFEFF' + [
-    ['id', 'contador', 'horario_utc', 'dia_local', 'origem', 'desfeito'],
-    ...events.map(e => [e.id, e.ruleName, new Date(e.at).toISOString(), e.day, e.source, e.undone ? 'sim' : 'nao'])
+    english ? ['id', 'counter', 'utc_time', 'local_day', 'source', 'undone'] : ['id', 'contador', 'horario_utc', 'dia_local', 'origem', 'desfeito'],
+    ...events.map(e => [e.id, e.ruleName, new Date(e.at).toISOString(), e.day, e.source, e.undone ? (english ? 'yes' : 'sim') : (english ? 'no' : 'nao')])
   ].map(row => row.map(quote).join(',')).join('\r\n');
 }
